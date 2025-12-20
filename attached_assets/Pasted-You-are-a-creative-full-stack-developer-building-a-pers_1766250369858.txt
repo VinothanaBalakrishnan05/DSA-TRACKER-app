@@ -1,0 +1,190 @@
+You are a creative full-stack developer building a personal demo app for tracking DSA + interview preparation.
+This is a vibe-coding project, not production.
+Prioritize clarity, speed, and visuals over completeness.
+
+🎯 Goal of the Demo
+
+Build a clean, satisfying tracker app that:
+
+Feels motivating to open daily
+
+Lets me tick progress easily
+
+Shows visible momentum (streaks, progress bars)
+
+Works fully in demo mode (local data only)
+
+No auth. No backend. No complexity.
+
+🧩 Core Demo Features (KEEP IT SMALL)
+1️⃣ Home Dashboard (Main Vibe Screen)
+
+Show:
+
+🔥 Daily streak counter
+
+📊 Overall DSA progress %
+
+🟩 Progress bars for:
+
+Sorting
+
+Binary Search
+
+Recursion
+
+Linked List
+
+Stack & Queue
+
+Trees
+
+Heaps
+
+Hashing
+
+DP
+
+Arrays (last)
+
+Use dummy starter data.
+
+2️⃣ DSA Checklist Page
+
+For each topic:
+
+Expandable card
+
+Checklist of subtopics
+
+Checkbox → instant progress update
+
+Status color:
+
+Gray = not started
+
+Yellow = in progress
+
+Green = done
+
+No reminders. No dates. Just vibes.
+
+3️⃣ Daily Tracker Page
+
+Simple daily view:
+
+Today’s date
+
+3–5 tasks (preloaded)
+
+Checkbox for each
+
+Optional “Notes” textarea
+
+If all checked → show 🎉 animation or message
+
+4️⃣ Interview Topics Page
+
+Static demo list:
+
+OS
+
+DBMS
+
+CN
+
+OOPs
+
+System Design
+
+Each with:
+
+Progress bar
+
+Confidence slider (1–5)
+
+5️⃣ Demo Persistence
+
+Use localStorage
+
+Reset button: “Start Fresh”
+
+Auto-save on every change
+
+🎨 UI / UX VIBE
+
+Minimal, Notion-like
+
+Dark mode default 🌙
+
+Big checkboxes
+
+Smooth hover animations
+
+No clutter
+
+🛠️ TECH CONSTRAINTS
+
+Frontend only
+
+React or Next.js
+
+Tailwind CSS
+
+No backend
+
+No auth
+
+No APIs
+
+📦 DATA SHAPE (SIMPLE)
+
+Use one simple JSON object:
+
+topics[]
+
+dailyTasks[]
+
+interviewSubjects[]
+
+Keep everything flat and readable.
+
+🧠 DEV STYLE
+
+Fewer files
+
+Inline mock data
+
+Clear component names
+
+Comments like: // demo-only logic
+
+🧪 DEMO MAGIC (IMPORTANT)
+
+Add small dopamine hits:
+
+Progress % increases smoothly
+
+Completion message: “Good work. Keep the streak alive.”
+
+Subtle animations on check
+
+🚫 DO NOT
+
+Over-engineer
+
+Add authentication
+
+Add backend
+
+Optimize prematurely
+
+✅ OUTPUT EXPECTED
+
+Running demo UI
+
+Clickable checklists
+
+Visible progress
+
+Feels good to use
