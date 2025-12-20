@@ -11,13 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 export default function DailyTracker() {
   const { state, toggleDailyTask, updateNotes, isLoading } = useStore();
 
-  if (isLoading || !state) return null;
-
   const today = format(new Date(), "EEEE, MMMM do, yyyy");
-  const allCompleted = state.dailyTasks.every(t => t.completed);
+  
+  const dailyTasks = state?.dailyTasks || [];
+  const allCompleted = dailyTasks.length > 0 && dailyTasks.every(t => t.completed);
 
   useEffect(() => {
-    if (allCompleted && state.dailyTasks.length > 0) {
+    if (allCompleted && dailyTasks.length > 0) {
       confetti({
         particleCount: 100,
         spread: 70,
@@ -25,7 +25,9 @@ export default function DailyTracker() {
         colors: ['#ffffff', '#aaaaaa', '#555555']
       });
     }
-  }, [allCompleted, state.dailyTasks]);
+  }, [allCompleted, dailyTasks]);
+
+  if (isLoading || !state) return null;
 
   return (
     <div className="min-h-screen bg-background flex">
