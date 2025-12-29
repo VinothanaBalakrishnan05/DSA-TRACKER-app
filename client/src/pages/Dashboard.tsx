@@ -20,8 +20,10 @@ export default function Dashboard() {
   const completedSubtopics = state.topics.reduce((acc, t) => acc + t.subtopics.filter(s => s.completed).length, 0);
   const totalProgress = Math.round((completedSubtopics / totalSubtopics) * 100) || 0;
 
-  // Calculate interview progress
-  const avgInterviewConfidence = Math.round(state.interviewSubjects.reduce((acc, s) => acc + s.confidence, 0) / state.interviewSubjects.length * 20) || 0;
+  // Calculate core subjects progress
+  const totalCoreItems = state.interviewSubjects.reduce((acc, s) => acc + s.items.length, 0);
+  const completedCoreItems = state.interviewSubjects.reduce((acc, s) => acc + s.items.filter(i => i.completed).length, 0);
+  const coreProgress = Math.round((completedCoreItems / totalCoreItems) * 100) || 0;
 
   const stats = [
     {
@@ -41,12 +43,12 @@ export default function Dashboard() {
       desc: "Topics learned"
     },
     {
-      label: "Interview Ready",
-      value: `${avgInterviewConfidence}%`,
+      label: "Core Readiness",
+      value: `${coreProgress}%`,
       icon: Trophy,
       color: "text-yellow-500",
       bg: "bg-yellow-500/10",
-      desc: "Confidence Level"
+      desc: "Subjects covered"
     }
   ];
 
