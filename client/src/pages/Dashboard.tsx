@@ -4,10 +4,11 @@ import { Sidebar } from "@/components/Sidebar";
 import { PageHeader } from "@/components/PageHeader";
 import { CircularProgress } from "@/components/CircularProgress";
 import { format } from "date-fns";
-import { Flame, Trophy, TrendingUp, CheckCircle2, Quote } from "lucide-react";
+import { Flame, Trophy, TrendingUp, CheckCircle2, Quote, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { useState, useEffect } from "react";
+import { SiGoogle, SiApple, SiStripe, SiAmazon, SiMeta, SiNetflix, SiUber, SiWindows } from "react-icons/si";
 
 const MOTIVATIONAL_QUOTES = [
   { quote: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
@@ -20,6 +21,17 @@ const MOTIVATIONAL_QUOTES = [
   { quote: "Consistency is what transforms average into excellence.", author: "Unknown" },
   { quote: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
   { quote: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" }
+];
+
+const TARGET_COMPANIES = [
+  { icon: SiGoogle, name: "Google", color: "text-red-500" },
+  { icon: SiWindows, name: "Microsoft", color: "text-blue-500" },
+  { icon: SiApple, name: "Apple", color: "text-zinc-400" },
+  { icon: SiStripe, name: "Stripe", color: "text-indigo-500" },
+  { icon: SiAmazon, name: "Amazon", color: "text-orange-500" },
+  { icon: SiMeta, name: "Meta", color: "text-blue-600" },
+  { icon: SiNetflix, name: "Netflix", color: "text-red-600" },
+  { icon: SiUber, name: "Uber", color: "text-white" }
 ];
 
 export default function Dashboard() {
@@ -36,41 +48,21 @@ export default function Dashboard() {
   const today = format(new Date(), 'yyyy-MM-dd');
   const todayData = getDayData(today);
   const dailyTasks = todayData.tasks;
-  const totalSubtopics = state.topics.reduce((acc, t) => acc + t.subtopics.length, 0);
-  const completedSubtopics = state.topics.reduce((acc, t) => acc + t.subtopics.filter(s => s.completed).length, 0);
-  const totalProgress = Math.round((completedSubtopics / totalSubtopics) * 100) || 0;
+  
+  // Total progress calculation (DSA topics + Core Subjects)
+  const totalDsaSubtopicsCount = state.topics.reduce((acc, t) => acc + t.subtopics.length, 0);
+  const completedDsaSubtopicsCount = state.topics.reduce((acc, t) => acc + t.subtopics.filter(s => s.completed).length, 0);
+  
+  const totalCoreItemsCount = state.interviewSubjects.reduce((acc, s) => acc + s.items.length, 0);
+  const completedCoreItemsCount = state.interviewSubjects.reduce((acc, s) => acc + s.items.filter(i => i.completed).length, 0);
 
-  // Calculate core subjects progress
-  const totalCoreItems = state.interviewSubjects.reduce((acc, s) => acc + s.items.length, 0);
-  const completedCoreItems = state.interviewSubjects.reduce((acc, s) => acc + s.items.filter(i => i.completed).length, 0);
-  const coreProgress = Math.round((completedCoreItems / totalCoreItems) * 100) || 0;
+  const totalItemsOverall = totalDsaSubtopicsCount + totalCoreItemsCount;
+  const totalCompletedOverall = completedDsaSubtopicsCount + completedCoreItemsCount;
+  const totalProgress = Math.round((totalCompletedOverall / totalItemsOverall) * 100) || 0;
+
+  const coreProgress = Math.round((completedCoreItemsCount / totalCoreItemsCount) * 100) || 0;
 
   const stats = [
-    {
-      label: "Current Streak",
-      value: `${state.streak} Days`,
-      icon: Flame,
-      color: "text-orange-500",
-      bg: "bg-orange-500/10",
-      desc: "Keep it up!"
-    },
-    {
-      label: "DSA Progress",
-      value: `${completedSubtopics}/${totalSubtopics}`,
-      icon: TrendingUp,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10",
-      desc: "Topics learned"
-    },
-    {
-      label: "Core Readiness",
-      value: `${coreProgress}%`,
-      icon: Trophy,
-      color: "text-yellow-500",
-      bg: "bg-yellow-500/10",
-      desc: "Subjects covered"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -138,27 +130,30 @@ export default function Dashboard() {
               </p>
             </motion.div>
 
-            {/* Topic Progress Bars */}
+            {/* Vision Board */}
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
               className="glass-card rounded-2xl p-6 col-span-1 lg:col-span-2"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold">Topic Breakdown</h3>
-                <Link href="/dsa" className="text-sm text-zinc-400 hover:text-white transition-colors">View All</Link>
+              <div className="flex items-center gap-2 mb-6">
+                <Target className="w-5 h-5 text-primary" />
+                <h3 className="text-xl font-semibold">Vision Board</h3>
               </div>
               
-              <div className="space-y-5 max-h-[300px] overflow-y-auto scrollbar-hide pr-2">
-                {state.topics.map((topic) => (
-                  <div key={topic.id} className="group">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-zinc-300 font-medium group-hover:text-white transition-colors">{topic.name}</span>
-                      <span className="text-zinc-500">{topic.progress}%</span>
-                    </div>
-                    <Progress value={topic.progress} className="h-2 bg-zinc-800" indicatorClassName="bg-white" />
-                  </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                {TARGET_COMPANIES.map((company, i) => (
+                  <motion.div
+                    key={company.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5 + (i * 0.05) }}
+                    className="flex flex-col items-center justify-center p-6 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-primary/20 hover:bg-primary/5 transition-all group"
+                  >
+                    <company.icon className={`w-10 h-10 ${company.color} opacity-60 group-hover:opacity-100 transition-opacity`} />
+                    <span className="mt-3 text-xs font-bold tracking-widest uppercase text-zinc-500 group-hover:text-white transition-colors">{company.name}</span>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
