@@ -11,7 +11,7 @@ export function Sidebar() {
     { href: "/daily", label: "Daily Tracker", icon: CalendarCheck },
     { href: "/weekly", label: "Weekly Tracker", icon: LayoutDashboard },
     { href: "/monthly", label: "Monthly Tracker", icon: LayoutDashboard },
-    { href: "/interview", label: "Interview Prep", icon: CheckSquare },
+    { href: "/interview", label: "Core Subjects", icon: CheckSquare },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 

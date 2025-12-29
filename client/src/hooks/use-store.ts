@@ -18,10 +18,17 @@ export type DayData = {
   notes: string;
 };
 
+export type CoreSubject = {
+  id: number;
+  name: string;
+  progress: number;
+  items: { id: string; name: string; completed: boolean }[];
+};
+
 export type AppState = {
   topics: StoredTopic[];
-  dailyTasks: DailyTask[]; // Legacy for backward compatibility during migration
-  interviewSubjects: InterviewSubject[];
+  dailyTasks: DailyTask[]; // Legacy
+  interviewSubjects: CoreSubject[];
   streak: number;
   lastVisit: string;
   notes: string; // Legacy
@@ -120,12 +127,71 @@ const INITIAL_TASKS: DailyTask[] = [
   { id: 3, text: 'Read 1 System Design article', completed: false, date: format(new Date(), 'yyyy-MM-dd') },
 ];
 
-const INITIAL_SUBJECTS: InterviewSubject[] = [
-  { id: 1, name: 'Operating Systems', progress: 20, confidence: 2 },
-  { id: 2, name: 'DBMS', progress: 40, confidence: 3 },
-  { id: 3, name: 'Computer Networks', progress: 10, confidence: 1 },
-  { id: 4, name: 'Object Oriented Programming', progress: 80, confidence: 5 },
-  { id: 5, name: 'System Design', progress: 0, confidence: 1 },
+const INITIAL_SUBJECTS: CoreSubject[] = [
+  {
+    id: 1,
+    name: 'Computer Networks',
+    progress: 0,
+    items: [
+      { id: 'cn1', name: 'OSI Model: layers, functions, examples', completed: false },
+      { id: 'cn2', name: 'TCP/IP Model: layers, protocols, differences with OSI', completed: false },
+      { id: 'cn3', name: 'IP Addressing: IPv4, IPv6, subnetting, CIDR', completed: false },
+      { id: 'cn4', name: 'TCP vs UDP: features, reliability, use cases', completed: false },
+      { id: 'cn5', name: 'TCP Three-Way Handshake', completed: false },
+      { id: 'cn6', name: 'Congestion Control & Flow Control', completed: false },
+      { id: 'cn7', name: 'HTTP / HTTPS: request-response flow', completed: false },
+      { id: 'cn8', name: 'SSL/TLS basics', completed: false },
+      { id: 'cn9', name: 'DNS lookup process', completed: false },
+      { id: 'cn10', name: 'Routing basics: static vs dynamic', completed: false },
+      { id: 'cn11', name: 'Client-server model & sockets', completed: false },
+      { id: 'cn12', name: 'Common scenario questions: e.g., "What happens when you type a URL in browser?"', completed: false },
+    ]
+  },
+  {
+    id: 2,
+    name: 'Object Oriented Programming',
+    progress: 0,
+    items: [
+      { id: 'oop1', name: 'Classes & Objects: attributes, methods, constructors/destructors', completed: false },
+      { id: 'oop2', name: 'Encapsulation', completed: false },
+      { id: 'oop3', name: 'Inheritance: types, pros & cons', completed: false },
+      { id: 'oop4', name: 'Polymorphism: compile-time (overloading) & runtime (overriding)', completed: false },
+      { id: 'oop5', name: 'Abstraction & Interfaces', completed: false },
+      { id: 'oop6', name: 'Composition vs Inheritance', completed: false },
+      { id: 'oop7', name: 'Memory concepts: Stack vs Heap', completed: false },
+      { id: 'oop8', name: 'Basic Design Patterns: Singleton, Factory', completed: false },
+      { id: 'oop9', name: 'Scenario-based questions: e.g., "Design a Parking Lot System"', completed: false },
+    ]
+  },
+  {
+    id: 3,
+    name: 'Database Management Systems (DBMS)',
+    progress: 0,
+    items: [
+      { id: 'db1', name: 'ER Diagrams & Relationships (1:1, 1:N, M:N)', completed: false },
+      { id: 'db2', name: 'Normalization: 1NF, 2NF, 3NF, BCNF', completed: false },
+      { id: 'db3', name: 'SQL Queries: SELECT, JOINs, GROUP BY, HAVING, subqueries', completed: false },
+      { id: 'db4', name: 'Indexing: B-Tree, Hash index, advantages & disadvantages', completed: false },
+      { id: 'db5', name: 'Transactions: ACID properties', completed: false },
+      { id: 'db6', name: 'Isolation Levels', completed: false },
+      { id: 'db7', name: 'Concurrency Control: deadlocks, locks, optimistic vs pessimistic', completed: false },
+      { id: 'db8', name: 'Scenario questions: e.g., "Write a query for second highest salary"', completed: false },
+    ]
+  },
+  {
+    id: 4,
+    name: 'Operating Systems (OS)',
+    progress: 0,
+    items: [
+      { id: 'os1', name: 'Process vs Thread: definitions, life cycle', completed: false },
+      { id: 'os2', name: 'CPU Scheduling: FCFS, SJF, Round Robin, Priority', completed: false },
+      { id: 'os3', name: 'Context Switching', completed: false },
+      { id: 'os4', name: 'Memory Management: Paging, Segmentation, Virtual Memory', completed: false },
+      { id: 'os5', name: 'Synchronization: Mutex, Semaphore, Deadlock conditions & prevention', completed: false },
+      { id: 'os6', name: 'File Systems: basics, inodes, file storage', completed: false },
+      { id: 'os7', name: 'Scenario-based questions: e.g., "Simulate LRU cache", "Explain deadlock with example"', completed: false },
+    ]
+  }
 ];
 
 const STORAGE_KEY = 'dev-tracker-v1';
@@ -144,6 +210,11 @@ export function useStore() {
       // Ensure calendarData exists
       if (!parsed.calendarData) {
         parsed.calendarData = {};
+      }
+
+      // Check for subjects migration
+      if (parsed.interviewSubjects[0] && !('items' in parsed.interviewSubjects[0])) {
+        parsed.interviewSubjects = INITIAL_SUBJECTS;
       }
 
       // Migrate legacy notes if needed
@@ -273,11 +344,18 @@ export function useStore() {
     updateDayData(date, { tasks: newTasks });
   };
 
-  const updateSubject = (id: number, updates: Partial<InterviewSubject>) => {
+  const toggleCoreItem = (subjectId: number, itemId: string) => {
     if (!state) return;
-    const newSubjects = state.interviewSubjects.map(sub => 
-      sub.id === id ? { ...sub, ...updates } : sub
-    );
+    const newSubjects = state.interviewSubjects.map(sub => {
+      if (sub.id === subjectId) {
+        const newItems = sub.items.map(item => 
+          item.id === itemId ? { ...item, completed: !item.completed } : item
+        );
+        const progress = Math.round((newItems.filter(i => i.completed).length / newItems.length) * 100);
+        return { ...sub, items: newItems, progress };
+      }
+      return sub;
+    });
     setState({ ...state, interviewSubjects: newSubjects });
   };
 
@@ -305,7 +383,7 @@ export function useStore() {
     isLoading: !state,
     toggleSubtopic,
     toggleDailyTask,
-    updateSubject,
+    toggleCoreItem,
     resetProgress,
     getDayData,
     updateDayData,
