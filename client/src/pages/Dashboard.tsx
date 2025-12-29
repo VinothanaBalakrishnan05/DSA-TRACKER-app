@@ -4,12 +4,32 @@ import { Sidebar } from "@/components/Sidebar";
 import { PageHeader } from "@/components/PageHeader";
 import { CircularProgress } from "@/components/CircularProgress";
 import { format } from "date-fns";
-import { Flame, Trophy, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Flame, Trophy, TrendingUp, CheckCircle2, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
+import { useState, useEffect } from "react";
+
+const MOTIVATIONAL_QUOTES = [
+  { quote: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+  { quote: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+  { quote: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+  { quote: "Code is like humor. When you have to explain it, it’s bad.", author: "Cory House" },
+  { quote: "Before software can be reusable it first has to be usable.", author: "Ralph Johnson" },
+  { quote: "The best way to predict the future is to invent it.", author: "Alan Kay" },
+  { quote: "Don't comment bad code - rewrite it.", author: "Brian Kernighan" },
+  { quote: "Consistency is what transforms average into excellence.", author: "Unknown" },
+  { quote: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
+  { quote: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" }
+];
 
 export default function Dashboard() {
   const { state, isLoading, getDayData } = useStore();
+  const [quote, setQuote] = useState(MOTIVATIONAL_QUOTES[0]);
+
+  useEffect(() => {
+    const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+    setQuote(MOTIVATIONAL_QUOTES[dayOfYear % MOTIVATIONAL_QUOTES.length]);
+  }, []);
 
   if (isLoading || !state) return null;
 
@@ -61,6 +81,23 @@ export default function Dashboard() {
             title="Dashboard" 
             description="Welcome back, Developer. Here's your progress overview." 
           />
+
+          {/* Motivational Quote */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card rounded-2xl p-6 border border-primary/10 bg-primary/5"
+          >
+            <div className="flex gap-4 items-start">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Quote className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-zinc-200 text-lg font-medium italic">"{quote.quote}"</p>
+                <p className="text-zinc-500 text-sm mt-1">— {quote.author}</p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
