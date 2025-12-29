@@ -8,11 +8,13 @@ import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
 export default function Dashboard() {
-  const { state, isLoading } = useStore();
+  const { state, isLoading, getDayData } = useStore();
 
   if (isLoading || !state) return null;
 
-  // Calculate total progress
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const todayData = getDayData(today);
+  const dailyTasks = todayData.tasks;
   const totalSubtopics = state.topics.reduce((acc, t) => acc + t.subtopics.length, 0);
   const completedSubtopics = state.topics.reduce((acc, t) => acc + t.subtopics.filter(s => s.completed).length, 0);
   const totalProgress = Math.round((completedSubtopics / totalSubtopics) * 100) || 0;
@@ -135,7 +137,7 @@ export default function Dashboard() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {state.dailyTasks.slice(0, 3).map((task) => (
+                {dailyTasks.slice(0, 3).map((task) => (
                   <div key={task.id} className="bg-zinc-900/50 rounded-xl p-4 border border-zinc-800 flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${task.completed ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
                       {task.completed && <CheckCircle2 className="w-3 h-3 text-white" />}
@@ -145,6 +147,11 @@ export default function Dashboard() {
                     </span>
                   </div>
                 ))}
+                {dailyTasks.length === 0 && (
+                  <div className="col-span-full py-4 text-center text-zinc-500 text-sm italic">
+                    No tasks scheduled for today.
+                  </div>
+                )}
               </div>
           </motion.div>
         </div>

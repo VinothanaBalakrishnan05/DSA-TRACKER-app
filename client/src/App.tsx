@@ -7,6 +7,8 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import DsaTopics from "@/pages/DsaTopics";
 import DailyTracker from "@/pages/DailyTracker";
+import WeeklyTracker from "@/pages/WeeklyTracker";
+import MonthlyTracker from "@/pages/MonthlyTracker";
 import InterviewPrep from "@/pages/InterviewPrep";
 import Settings from "@/pages/Settings";
 
@@ -16,6 +18,8 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/dsa" component={DsaTopics} />
       <Route path="/daily" component={DailyTracker} />
+      <Route path="/weekly" component={WeeklyTracker} />
+      <Route path="/monthly" component={MonthlyTracker} />
       <Route path="/interview" component={InterviewPrep} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />

@@ -158,11 +158,16 @@ export function useStore() {
       // Check for day reset
       if (parsed.lastVisit !== today) {
         const lastVisitDate = parseISO(parsed.lastVisit);
-        const diff = differenceInCalendarDays(new Date(), lastVisitDate);
+        const yesterday = format(addDays(new Date(), -1), 'yyyy-MM-dd');
         
-        if (diff === 1) {
+        // Calculate streak based on daily task completion
+        const yesterdayData = parsed.calendarData?.[yesterday];
+        const yesterdayCompleted = yesterdayData && yesterdayData.tasks.length > 0 && yesterdayData.tasks.every(t => t.completed);
+
+        if (yesterdayCompleted) {
           parsed.streak += 1;
-        } else if (diff > 1) {
+        } else {
+          // If they missed yesterday, streak resets to 1 (starting today)
           parsed.streak = 1;
         }
         

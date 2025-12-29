@@ -9,6 +9,8 @@ export function Sidebar() {
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dsa", label: "DSA Topics", icon: BookOpen },
     { href: "/daily", label: "Daily Tracker", icon: CalendarCheck },
+    { href: "/weekly", label: "Weekly Tracker", icon: LayoutDashboard },
+    { href: "/monthly", label: "Monthly Tracker", icon: LayoutDashboard },
     { href: "/interview", label: "Interview Prep", icon: CheckSquare },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
