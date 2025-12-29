@@ -13,13 +13,19 @@ export type StoredTopic = Omit<Topic, 'subtopics'> & {
   subtopics: SubTopic[];
 };
 
+export type DayData = {
+  tasks: DailyTask[];
+  notes: string;
+};
+
 export type AppState = {
   topics: StoredTopic[];
-  dailyTasks: DailyTask[];
+  dailyTasks: DailyTask[]; // Legacy for backward compatibility during migration
   interviewSubjects: InterviewSubject[];
   streak: number;
   lastVisit: string;
-  notes: string;
+  notes: string; // Legacy
+  calendarData: Record<string, DayData>;
 };
 
 const INITIAL_TOPICS: StoredTopic[] = [
@@ -135,34 +141,59 @@ export function useStore() {
     if (saved) {
       const parsed: AppState = JSON.parse(saved);
       
+      // Ensure calendarData exists
+      if (!parsed.calendarData) {
+        parsed.calendarData = {};
+      }
+
+      // Migrate legacy notes if needed
+      if (parsed.notes && !parsed.calendarData[today]?.notes) {
+        parsed.calendarData[today] = {
+          ...parsed.calendarData[today],
+          notes: parsed.notes,
+          tasks: parsed.calendarData[today]?.tasks || parsed.dailyTasks || []
+        };
+      }
+      
       // Check for day reset
       if (parsed.lastVisit !== today) {
-        // It's a new day
         const lastVisitDate = parseISO(parsed.lastVisit);
         const diff = differenceInCalendarDays(new Date(), lastVisitDate);
         
-        // Update streak logic
         if (diff === 1) {
           parsed.streak += 1;
         } else if (diff > 1) {
-          parsed.streak = 1; // Streak broken
+          parsed.streak = 1;
         }
         
-        // Reset daily tasks
-        parsed.dailyTasks = INITIAL_TASKS.map(t => ({ ...t, date: today }));
+        // Initialize today if not exists
+        if (!parsed.calendarData[today]) {
+          // Carry over incomplete tasks or start fresh? User wants to schedule.
+          // Let's start with INITIAL_TASKS but allow custom.
+          parsed.calendarData[today] = {
+            tasks: INITIAL_TASKS.map(t => ({ ...t, date: today })),
+            notes: ''
+          };
+        }
+        
         parsed.lastVisit = today;
       }
       
       setState(parsed);
     } else {
-      // First visit initialization
       const initial: AppState = {
         topics: INITIAL_TOPICS,
         dailyTasks: INITIAL_TASKS,
         interviewSubjects: INITIAL_SUBJECTS,
         streak: 1,
         lastVisit: today,
-        notes: ''
+        notes: '',
+        calendarData: {
+          [today]: {
+            tasks: INITIAL_TASKS.map(t => ({ ...t, date: today })),
+            notes: ''
+          }
+        }
       };
       setState(initial);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
@@ -184,11 +215,8 @@ export function useStore() {
         const newSubtopics = topic.subtopics.map(st => 
           st.id === subtopicId ? { ...st, completed: !st.completed } : st
         );
-        
-        // Recalculate progress
         const completedCount = newSubtopics.filter(st => st.completed).length;
         const progress = Math.round((completedCount / newSubtopics.length) * 100);
-        
         return { ...topic, subtopics: newSubtopics, progress };
       }
       return topic;
@@ -197,12 +225,47 @@ export function useStore() {
     setState({ ...state, topics: newTopics });
   };
 
-  const toggleDailyTask = (taskId: number) => {
+  const getDayData = (date: string) => {
+    if (!state) return { tasks: [], notes: '' };
+    return state.calendarData?.[date] || { tasks: [], notes: '' };
+  };
+
+  const updateDayData = (date: string, updates: Partial<DayData>) => {
     if (!state) return;
-    const newTasks = state.dailyTasks.map(task => 
+    const currentData = getDayData(date);
+    const newState = {
+      ...state,
+      calendarData: {
+        ...state.calendarData,
+        [date]: { ...currentData, ...updates }
+      }
+    };
+    setState(newState);
+  };
+
+  const addTask = (date: string, text: string) => {
+    const current = getDayData(date);
+    const newTask: DailyTask = {
+      id: Date.now(),
+      text,
+      completed: false,
+      date
+    };
+    updateDayData(date, { tasks: [...current.tasks, newTask] });
+  };
+
+  const toggleDailyTask = (date: string, taskId: number) => {
+    const current = getDayData(date);
+    const newTasks = current.tasks.map(task => 
       task.id === taskId ? { ...task, completed: !task.completed } : task
     );
-    setState({ ...state, dailyTasks: newTasks });
+    updateDayData(date, { tasks: newTasks });
+  };
+
+  const removeTask = (date: string, taskId: number) => {
+    const current = getDayData(date);
+    const newTasks = current.tasks.filter(task => task.id !== taskId);
+    updateDayData(date, { tasks: newTasks });
   };
 
   const updateSubject = (id: number, updates: Partial<InterviewSubject>) => {
@@ -213,11 +276,6 @@ export function useStore() {
     setState({ ...state, interviewSubjects: newSubjects });
   };
 
-  const updateNotes = (notes: string) => {
-    if (!state) return;
-    setState({ ...state, notes });
-  };
-
   const resetProgress = () => {
     const today = format(new Date(), 'yyyy-MM-dd');
     const initial: AppState = {
@@ -226,7 +284,13 @@ export function useStore() {
       interviewSubjects: INITIAL_SUBJECTS,
       streak: 1,
       lastVisit: today,
-      notes: ''
+      notes: '',
+      calendarData: {
+        [today]: {
+          tasks: INITIAL_TASKS.map(t => ({ ...t, date: today })),
+          notes: ''
+        }
+      }
     };
     setState(initial);
   };
@@ -237,7 +301,10 @@ export function useStore() {
     toggleSubtopic,
     toggleDailyTask,
     updateSubject,
-    updateNotes,
-    resetProgress
+    resetProgress,
+    getDayData,
+    updateDayData,
+    addTask,
+    removeTask
   };
 }
