@@ -3,6 +3,7 @@ import { useStore } from "@/hooks/use-store";
 import { Sidebar } from "@/components/Sidebar";
 import { PageHeader } from "@/components/PageHeader";
 import { CircularProgress } from "@/components/CircularProgress";
+import { format } from "date-fns";
 import { Flame, Trophy, TrendingUp, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
