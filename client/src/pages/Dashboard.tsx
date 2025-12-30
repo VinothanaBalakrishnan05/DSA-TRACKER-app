@@ -63,6 +63,31 @@ export default function Dashboard() {
   const coreProgress = Math.round((completedCoreItemsCount / totalCoreItemsCount) * 100) || 0;
 
   const stats = [
+    {
+      label: "Current Streak",
+      value: `${state.streak} Days`,
+      icon: Flame,
+      color: "text-orange-500",
+      bg: "bg-orange-500/10",
+      desc: "Keep it up!"
+    },
+    {
+      label: "DSA Progress",
+      value: `${completedDsaSubtopicsCount}/${totalDsaSubtopicsCount}`,
+      icon: TrendingUp,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      desc: "Topics learned"
+    },
+    {
+      label: "Core Readiness",
+      value: `${coreProgress}%`,
+      icon: Trophy,
+      color: "text-yellow-500",
+      bg: "bg-yellow-500/10",
+      desc: "Subjects covered"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background flex">
