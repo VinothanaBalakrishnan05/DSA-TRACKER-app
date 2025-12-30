@@ -12,7 +12,6 @@ export function Sidebar() {
     { href: "/weekly", label: "Weekly Tracker", icon: LayoutDashboard },
     { href: "/monthly", label: "Monthly Tracker", icon: LayoutDashboard },
     { href: "/interview", label: "Core Subjects", icon: CheckSquare },
-    { href: "/jobs", label: "Job Applications", icon: Briefcase },
     { href: "/companies", label: "Company Tracker", icon: Building2 },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
