@@ -8,7 +8,8 @@ import { Flame, Trophy, TrendingUp, CheckCircle2, Quote, Target } from "lucide-r
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { useState, useEffect } from "react";
-import { SiGoogle, SiApple, SiStripe, SiAmazon, SiMeta, SiNetflix, SiUber, SiWindows } from "react-icons/si";
+import { SiGoogle, SiApple, SiStripe, SiAmazon, SiMeta, SiNetflix, SiUber } from "react-icons/si";
+import { VscVscode } from "react-icons/vsc";
 
 const MOTIVATIONAL_QUOTES = [
   { quote: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
@@ -25,7 +26,7 @@ const MOTIVATIONAL_QUOTES = [
 
 const TARGET_COMPANIES = [
   { icon: SiGoogle, name: "Google", color: "text-red-500" },
-  { icon: SiWindows, name: "Microsoft", color: "text-blue-500" },
+  { icon: VscVscode, name: "Microsoft", color: "text-blue-500" },
   { icon: SiApple, name: "Apple", color: "text-zinc-400" },
   { icon: SiStripe, name: "Stripe", color: "text-indigo-500" },
   { icon: SiAmazon, name: "Amazon", color: "text-orange-500" },
