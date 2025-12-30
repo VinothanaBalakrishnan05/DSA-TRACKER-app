@@ -12,6 +12,7 @@ import MonthlyTracker from "@/pages/MonthlyTracker";
 import InterviewPrep from "@/pages/InterviewPrep";
 import Settings from "@/pages/Settings";
 import JobTracker from "@/pages/JobTracker";
+import CompanyTracker from "@/pages/CompanyTracker";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/monthly" component={MonthlyTracker} />
       <Route path="/interview" component={InterviewPrep} />
       <Route path="/jobs" component={JobTracker} />
+      <Route path="/companies" component={CompanyTracker} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
