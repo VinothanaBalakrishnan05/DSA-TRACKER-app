@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, CheckSquare, BookOpen, CalendarCheck, Settings } from "lucide-react";
+import { LayoutDashboard, CheckSquare, BookOpen, CalendarCheck, Settings, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
@@ -12,6 +12,7 @@ export function Sidebar() {
     { href: "/weekly", label: "Weekly Tracker", icon: LayoutDashboard },
     { href: "/monthly", label: "Monthly Tracker", icon: LayoutDashboard },
     { href: "/interview", label: "Core Subjects", icon: CheckSquare },
+    { href: "/jobs", label: "Job Applications", icon: Briefcase },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 

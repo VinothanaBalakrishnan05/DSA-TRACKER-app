@@ -37,6 +37,32 @@ export type Topic = typeof topics.$inferSelect;
 export type DailyTask = typeof dailyTasks.$inferSelect;
 export type InterviewSubject = typeof interviewSubjects.$inferSelect;
 
+// Job Applications Tracker
+export const jobApplications = pgTable("job_applications", {
+  id: text("id").primaryKey(),
+  companyName: text("company_name").notNull(),
+  applicationStatus: text("application_status").notNull().$type<'pending' | 'accepted' | 'rejected'>().default('pending'),
+  review: text("review"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const interviewRounds = pgTable("interview_rounds", {
+  id: text("id").primaryKey(),
+  applicationId: text("application_id").notNull(),
+  roundName: text("round_name").notNull(),
+  roundNumber: integer("round_number").notNull(),
+  status: text("status").notNull().$type<'pending' | 'accepted' | 'rejected'>().default('pending'),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const insertJobApplicationSchema = createInsertSchema(jobApplications);
+export const insertInterviewRoundSchema = createInsertSchema(interviewRounds);
+
+export type JobApplication = typeof jobApplications.$inferSelect;
+export type InterviewRound = typeof interviewRounds.$inferSelect;
+
 // App State for LocalStorage
 export type AppState = {
   topics: Topic[];
